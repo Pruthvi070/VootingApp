@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-// const bcrypt = require('bcrypt');
 
-// Define the Person schema
+// Define the Candidate schema
 const candidateSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -13,7 +12,9 @@ const candidateSchema = new mongoose.Schema({
     },
     age: {
         type: Number,
-        required: true
+        required: true,
+        min: 18, // Example validation: Age should be at least 18
+        max: 120 // Example validation: Age should not exceed 120
     },
     votes: [
         {
@@ -24,7 +25,7 @@ const candidateSchema = new mongoose.Schema({
             },
             votedAt: {
                 type: Date,
-                default: Date.now()
+                default: Date.now // Default value as a function
             }
         }
     ],
@@ -34,5 +35,10 @@ const candidateSchema = new mongoose.Schema({
     }
 });
 
+// Create an index on the votes.user field for better performance on queries
+candidateSchema.index({ 'votes.user': 1 });
+
+// Create the Candidate model
 const Candidate = mongoose.model('Candidate', candidateSchema);
+
 module.exports = Candidate;

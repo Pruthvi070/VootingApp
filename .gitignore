@@ -11,5 +11,5 @@ node_modules/
 dist/
 build/
 
-# Ignore VS Code settings
+ # Ignore VS Code settings
 .vscode/

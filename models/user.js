@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-// const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
-// Define the Person schema
+// Define the User schema
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -12,19 +12,36 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     email: {
-        type: String
+        type: String,
+        required: true,
+        unique: true
     },
     mobile: {
-        type: String
+        type: String,
+        required: false  // Change to false if mobile is optional
     },
     address: {
-        type: String,
-        required: true
+        street: {
+            type: String,
+            required: true
+        },
+        city: {
+            type: String,
+            required: true
+        },
+        state: {
+            type: String,
+            required: true
+        },
+        zipCode: {
+            type: String,
+            required: true
+        }
     },
     aadharCardNumber: {
-        type: Number,
+        type: String,
         required: true,
-        unqiue: true
+        unique: true
     },
     password: {
         type: String,
@@ -41,33 +58,26 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-
-userSchema.pre('save', async function(next){
-    const person = this;
+// Middleware to hash password before saving
+userSchema.pre('save', async function(next) {
+    const user = this;
 
     // Hash the password only if it has been modified (or is new)
-    if(!person.isModified('password')) return next();
-    try{
-        // hash password generation
+    if (!user.isModified('password')) return next();
+    try {
         const salt = await bcrypt.genSalt(10);
-
-        // hash password
-        const hashedPassword = await bcrypt.hash(person.password, salt);
-        
-        // Override the plain password with the hashed one
-        person.password = hashedPassword;
+        user.password = await bcrypt.hash(user.password, salt);
         next();
-    }catch(err){
+    } catch (err) {
         return next(err);
     }
-})
+});
 
-userSchema.methods.comparePassword = async function(candidatePassword){
-    try{
-        // Use bcrypt to compare the provided password with the hashed password
-        const isMatch = await bcrypt.compare(candidatePassword, this.password);
-        return isMatch;
-    }catch(err){
+// Method to compare passwords
+userSchema.methods.comparePassword = async function(candidatePassword) {
+    try {
+        return await bcrypt.compare(candidatePassword, this.password);
+    } catch (err) {
         throw err;
     }
 }
