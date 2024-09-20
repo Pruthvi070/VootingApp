@@ -16,10 +16,6 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    mobile: {
-        type: String,
-        required: false  // Change to false if mobile is optional
-    },
     address: {
         street: {
             type: String,

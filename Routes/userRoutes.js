@@ -9,7 +9,7 @@ router.post('/signup', async (req, res) => {
         const data = req.body;
 
         // Check if all required fields are present
-        const requiredFields = ['name', 'aadharCardNumber', 'email', 'age', 'password', 'mobileNumber', 'address', 'role'];
+        const requiredFields = ['name', 'aadharCardNumber', 'email', 'age', 'password', 'address', 'role'];
         for (const field of requiredFields) {
             if (!data[field]) {
                 return res.status(400).json({ error: `Missing field: ${field}` });
